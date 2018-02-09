@@ -1,0 +1,168 @@
+IF 'if' 2:5
+Entering stmts(2:5)
+Entering stmt(2:5)
+Entering cond(2:5)
+ID 'cat' 2:8
+Entering bexpr(2:8)
+Entering expr(2:8)
+Entering value(2:8)
+EQUAL '==' 2:12
+Exiting value(2:8)
+Entering exprt(2:12)
+Exiting exprt(2:12)
+Exiting expr(2:8)
+Entering bexprt(2:12)
+ID 'moose' 2:15
+Entering expr(2:15)
+Entering value(2:15)
+THEN 'then' 2:21
+Exiting value(2:15)
+Entering exprt(2:21)
+Exiting exprt(2:21)
+Exiting expr(2:15)
+Exiting bexprt(2:12)
+Exiting bexpr(2:8)
+ID 'x' 2:26
+Entering stmts(2:26)
+Entering stmt(2:26)
+Entering ASSIGN(2:26)
+ASSIGN '=' 2:28
+Entering listindex(2:28)
+Exiting listindex(2:28)
+INT '2' 2:30
+Entering expr(2:30)
+Entering value(2:30)
+SEMICOLON ';' 2:31
+Exiting value(2:30)
+Entering exprt(2:31)
+Exiting exprt(2:31)
+Exiting expr(2:30)
+ID 'max' 2:33
+Exiting ASSIGN(2:26)
+Exiting stmt(2:26)
+Entering stmts(2:33)
+Entering stmt(2:33)
+Entering ASSIGN(2:33)
+ASSIGN '=' 2:37
+Entering listindex(2:37)
+Exiting listindex(2:37)
+INT '2' 2:39
+Entering expr(2:39)
+Entering value(2:39)
+SEMICOLON ';' 2:40
+Exiting value(2:39)
+Entering exprt(2:40)
+Exiting exprt(2:40)
+Exiting expr(2:39)
+ELSEIF 'elseif' 3:5
+Exiting ASSIGN(2:33)
+Exiting stmt(2:33)
+Entering stmts(3:5)
+Exiting stmts(3:5)
+Exiting stmts(2:33)
+Exiting stmts(2:26)
+Entering condt(3:5)
+INT '2' 3:12
+Entering bexpr(3:12)
+Entering expr(3:12)
+Entering value(3:12)
+LESS_THAN '<' 3:14
+Exiting value(3:12)
+Entering exprt(3:14)
+Exiting exprt(3:14)
+Exiting expr(3:12)
+Entering bexprt(3:14)
+ID 'x' 3:16
+Entering expr(3:16)
+Entering value(3:16)
+THEN 'then' 3:18
+Exiting value(3:16)
+Entering exprt(3:18)
+Exiting exprt(3:18)
+Exiting expr(3:16)
+Exiting bexprt(3:14)
+Exiting bexpr(3:12)
+ID 'x' 3:23
+Entering stmts(3:23)
+Entering stmt(3:23)
+Entering ASSIGN(3:23)
+ASSIGN '=' 3:25
+Entering listindex(3:25)
+Exiting listindex(3:25)
+INT '2' 3:27
+Entering expr(3:27)
+Entering value(3:27)
+SEMICOLON ';' 3:28
+Exiting value(3:27)
+Entering exprt(3:28)
+Exiting exprt(3:28)
+Exiting expr(3:27)
+
+ELSE 'else' 4:5
+Exiting ASSIGN(3:23)
+Exiting stmt(3:23)
+Entering stmts(4:5)
+Exiting stmts(4:5)
+Exiting stmts(3:23)
+Entering condt(4:5)
+ID 'happy' 5:9
+Entering stmts(5:9)
+Entering stmt(5:9)
+Entering ASSIGN(5:9)
+ASSIGN '=' 5:15
+Entering listindex(5:15)
+Exiting listindex(5:15)
+LBRACKET '[' 5:17
+Entering expr(5:17)
+Entering value(5:17)
+INT '1' 5:18
+Entering exprlist(5:18)
+Entering expr(5:18)
+Entering value(5:18)
+COMMA ',' 5:19
+Exiting value(5:18)
+Entering exprt(5:19)
+Exiting exprt(5:19)
+Exiting expr(5:18)
+Entering exprtail(5:19)
+INT '2' 5:20
+Entering expr(5:20)
+Entering value(5:20)
+COMMA ',' 5:21
+Exiting value(5:20)
+Entering exprt(5:21)
+Exiting exprt(5:21)
+Exiting expr(5:20)
+Entering exprtail(5:21)
+INT '1' 5:22
+Entering expr(5:22)
+Entering value(5:22)
+RBRACKET ']' 5:23
+Exiting value(5:22)
+Entering exprt(5:23)
+Exiting exprt(5:23)
+Exiting expr(5:22)
+Entering exprtail(5:23)
+Exiting exprtail(5:23)
+Exiting exprtail(5:21)
+Exiting exprtail(5:19)
+Exiting exprlist(5:18)
+SEMICOLON ';' 5:24
+Exiting value(5:17)
+Entering exprt(5:24)
+Exiting exprt(5:24)
+Exiting expr(5:17)
+END 'end' 6:5
+Exiting ASSIGN(5:9)
+Exiting stmt(5:9)
+Entering stmts(6:5)
+Exiting stmts(6:5)
+Exiting stmts(5:9)
+Exiting condt(4:5)
+Exiting condt(3:5)
+EOS '' 7:5
+Exiting cond(2:5)
+Exiting stmt(2:5)
+Entering stmts(7:5)
+Exiting stmts(7:5)
+Exiting stmts(2:5)
