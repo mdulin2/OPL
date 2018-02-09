@@ -298,9 +298,11 @@ void Parser::bconnect(){
     ContextLog clog("bconnect", currentLexeme);
     if(currentLexeme.token == Token::AND){
         advance();
+        bexpr();
         return;
     }else if(currentLexeme.token == Token::OR){
         advance();
+        bexpr();
         return;
     }else {
         return;

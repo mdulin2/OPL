@@ -26,7 +26,7 @@ else
 end
     )code";
     code = R"code(
-    if cat == moose then x = 2; max = 2;
+    if cat == moose and x <= 2 then x = 2; max = 2;
 end
     )code";
     // Create an istringstream based on the contents of the string "code".
