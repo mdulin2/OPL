@@ -81,7 +81,6 @@ void Parser::stmts() {
 // From here on, you will want to modify these functions
 void Parser::stmt() {
     ContextLog clog("stmt", currentLexeme);
-    //expr();
     switch (currentLexeme.token) {
         case Token::PRINT:
         case Token::PRINTLN:
@@ -92,8 +91,10 @@ void Parser::stmt() {
             break;
         case Token::IF:
             cond();
+            break;
         case Token::WHILE:
-            //loop
+            loop();
+            break;
         default:
             break;
         }
@@ -101,7 +102,6 @@ void Parser::stmt() {
 
 void Parser::bexpr(){
     ContextLog clog("bexpr", currentLexeme);
-    cout << "fine and dandy!" << endl;
     if(currentLexeme.token != Token::NOT){
         expr();
         bexprt();
@@ -190,7 +190,16 @@ void Parser::listindex() {
         //this is the case of the empty listindex
     }
 }
-
+void Parser::loop(){
+    ContextLog clog("loop", currentLexeme);
+    if(currentLexeme.token == Token::WHILE){
+        eat(Token::WHILE, "Expected While");
+        bexpr();
+        eat(Token::DO,"Expected Do");
+        stmts();
+        eat(Token::END, "Expected End");
+    }
+}
 void Parser::input() {
     ContextLog clog("input", currentLexeme);
     if(is_input()){
@@ -206,9 +215,6 @@ void Parser::input() {
 
 void Parser::expr() {
     ContextLog clog("expr", currentLexeme);
-
-    //why is this order not followed in the example?
-    //But, assigning stil goes into listindex?
     value();
     exprt();
 }
