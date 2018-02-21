@@ -29,7 +29,15 @@ z = [1, 2, 3];
     )code";
 
 code = R"code(
-    if not m == 2 and n <= 2 then r = "st"; end
+    if not m == 2 and n <= 2 then
+        r = "st";
+    elseif x == 5 then
+        e = 2;
+    elseif t != x or 1 == y then
+        t = j; y = u; println("t");
+    else
+        max = kurt;
+    end
 )code";
     cout << code << endl;
     istringstream ins(code);

@@ -1,72 +1,74 @@
-WHILE 'while' 2:5
-Entering stmts(2:5)
-Entering stmt(2:5)
-Entering loop(2:5)
-ID 'x' 2:11
-Entering bexpr(2:11)
-Entering expr(2:11)
-Entering value(2:11)
-EQUAL '==' 2:13
-Exiting value(2:11)
-Entering exprt(2:13)
-Exiting exprt(2:13)
-Exiting expr(2:11)
-Entering bexprt(2:13)
-Entering bool_rel(2:13)
-INT '2' 2:16
-Exiting bool_rel(2:13)
-Entering expr(2:16)
-Entering value(2:16)
-DO 'do' 2:18
-Exiting value(2:16)
-Entering exprt(2:18)
-Exiting exprt(2:18)
-Exiting expr(2:16)
-Entering bconnect(2:18)
-Exiting bconnect(2:18)
-Exiting bexprt(2:13)
-Exiting bexpr(2:11)
-PRINTLN 'println' 3:5
-Entering stmts(3:5)
-Entering stmt(3:5)
-Entering output(3:5)
-LPAREN '(' 3:12
-STRING '"2"' 3:13
-Entering expr(3:13)
-Entering value(3:13)
-RPAREN ')' 3:16
-Exiting value(3:13)
-Entering exprt(3:16)
-Exiting exprt(3:16)
-Exiting expr(3:13)
-SEMICOLON ';' 3:17
-ID 'x' 4:5
-Exiting output(3:5)
-Exiting stmt(3:5)
-Entering stmts(4:5)
-Entering stmt(4:5)
-Entering ASSIGN(4:5)
-ASSIGN '=' 4:7
-Entering listindex(4:7)
-Exiting listindex(4:7)
-INT '3' 4:9
-Entering expr(4:9)
-Entering value(4:9)
-SEMICOLON ';' 4:10
-Exiting value(4:9)
-Entering exprt(4:10)
-Exiting exprt(4:10)
-Exiting expr(4:9)
-END 'end' 5:1
-Exiting ASSIGN(4:5)
-Exiting stmt(4:5)
-Entering stmts(5:1)
-Exiting stmts(5:1)
-Exiting stmts(4:5)
-Exiting stmts(3:5)
-EOS '' 6:5
-Exiting loop(2:5)
-Exiting stmt(2:5)
-Entering stmts(6:5)
-Exiting stmts(6:5)
-Exiting stmts(2:5)
+
+    if not m == 2 and n <= 2 then
+        r = "st";
+    elseif x == 5 then
+        e = 2;
+    elseif t != x or 1 == y then
+        t = j; y = u; println("t");
+    else
+        max = kurt;
+    end
+
+StatementList
+    IfStatement
+        If:
+            BasicIf
+                ComplexBoolExpression:
+                    not
+                    Identifier: m
+                    EQUAL
+                    Integer literal: 2
+                    AND
+                    ComplexBoolExpression:
+                        Identifier: n
+                        LESS_THAN_EQUAL
+                        Integer literal: 2
+                StatementList
+                    Assignment:
+                        Set:
+                        Identifier: r
+                        Equal to:
+                        String literal: ""st""
+        Elseif:
+            BasicIf
+                ComplexBoolExpression:
+                    Identifier: x
+                    EQUAL
+                    Integer literal: 5
+                StatementList
+                    Assignment:
+                        Set:
+                        Identifier: e
+                        Equal to:
+                        Integer literal: 2
+        Elseif:
+            BasicIf
+                ComplexBoolExpression:
+                    Identifier: t
+                    NOT_EQUAL
+                    Identifier: x
+                    OR
+                    ComplexBoolExpression:
+                        Integer literal: 1
+                        EQUAL
+                        Identifier: y
+                StatementList
+                    Assignment:
+                        Set:
+                        Identifier: t
+                        Equal to:
+                        Identifier: j
+                    Assignment:
+                        Set:
+                        Identifier: y
+                        Equal to:
+                        Identifier: u
+                    Println
+                        String literal: ""t""
+        Else:
+        StatementList
+            Assignment:
+                Set:
+                Identifier: max
+                Equal to:
+                Identifier: kurt

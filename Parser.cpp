@@ -292,14 +292,16 @@ void Parser::condt(std::shared_ptr<ASTIfStatement> statement) {
     ContextLog clog("condt", currentLexeme);
     if(currentLexeme.token == Token::ELSEIF){
         advance();
-        //statement->elseifs.bexpr();
+        auto ans = make_shared<ASTBasicIf>();
+        ans->expression = bexpr();
         eat(Token::THEN, "Expected THEN");
-        stmts();
+        ans->statementList= stmts();
+        statement->elseifs.push_back(*ans);
         condt(statement);
     }
     else if(currentLexeme.token == Token::ELSE){
         advance();
-        stmts();
+        statement->elseList = stmts();
     }
     else{
         //the empty case, to move on to the next one
@@ -317,6 +319,7 @@ std::shared_ptr<ASTBoolExpression> Parser::bexpr() {
             bexprt(boolean_exp);
         }
     }
+
     else{
         boolean_exp->first = expr();
         if(is_bool_rel()){
@@ -363,8 +366,6 @@ std::shared_ptr<ASTWhileStatement> Parser::loop() {
     // TODO
     return ans;
 }
-
-
 
 //boolean checks
 bool Parser::is_math_rel(){
