@@ -135,13 +135,10 @@ std::shared_ptr<ASTAssignmentStatement> Parser::assign() {
     ContextLog clog("assign", currentLexeme);
     auto ans = make_shared<ASTAssignmentStatement>();
 
-    //check for list assign...
     ans->identifier = make_shared<ASTIdentifier>();
     ans->identifier->name = currentLexeme.text;
     advance();
-
-    //listindex(); //TODO
-
+    ans->identifier->indexExpression = listindex();
     // check to see if list index
     eat(Token::ASSIGN,"expected assignment: = ");
     ans->rhs = expr();
@@ -151,19 +148,21 @@ std::shared_ptr<ASTAssignmentStatement> Parser::assign() {
 
 std::shared_ptr<ASTExpression> Parser::listindex() {
     ContextLog clog("listindex", currentLexeme);
-    auto ans = make_shared<ASTAssignmentStatement>();
-    // TODO
-    return nullptr;
+
+    if(is_list_index() == false){
+        return nullptr;
+    }
+    eat(Token::LBRACKET, "Expected '['");
+    auto ans = expr();
+    eat(Token::RBRACKET, "Expected ']'");
+    return ans;
 }
 
 std::shared_ptr<ASTExpression> Parser::expr() {
     ContextLog clog("expr", currentLexeme);
-
-
     auto ans = value();
-
     if(is_math_rel()){
-        cout << "dug" << endl;
+
         auto complex = make_shared<ASTComplexExpression>();
         complex->firstOperand = ans;
         exprt(complex);
@@ -219,10 +218,9 @@ std::shared_ptr<ASTExpression> Parser::value() {
      if(currentLexeme.token == Token::ID){
         auto ans = make_shared<ASTIdentifier>();
         ans->name = currentLexeme.text;
-        //the varible needs to be checked for lists indexing somewhere...
-
         eat(Token::ID,"Expected an ID");
         return ans;
+
     }else if(currentLexeme.token == Token::STRING){
         auto ans = make_shared<ASTLiteral>();
         ans->type = MPLType::STRING;
@@ -260,18 +258,20 @@ std::shared_ptr<ASTExpression> Parser::value() {
 std::shared_ptr<ASTListLiteral> Parser::exprlist() {
     ContextLog clog("exprlist", currentLexeme);
     auto ans = make_shared<ASTListLiteral>();
-    //some sort of way to do
-    ans->expressions.push_back(expr());
-    //exprt();
+
+    auto index1 = expr();
+    ans->expressions.push_back(index1);
+    exprtail(ans);
     return ans;
 }
 void Parser::exprtail(std::shared_ptr<ASTListLiteral> list) {
     ContextLog clog("exprtail", currentLexeme);
-    //TODO
     if(currentLexeme.token == Token::COMMA){
+        cout << "udasdfafdag" << endl;
         eat(Token::COMMA,"Expected a comma");
-        expr();
-        //exprtail();
+
+        list->expressions.push_back(expr());
+        exprtail(list);
     }
 }
 
@@ -347,7 +347,6 @@ void Parser::bexprt(std::shared_ptr<ASTComplexBoolExpression> expression) {
     advance();
     expression->second = expr();
     if(is_bconnect()){
-
         bconnect(expression);
     }
 }
@@ -363,7 +362,11 @@ void Parser::bconnect(std::shared_ptr<ASTComplexBoolExpression> expression) {
 std::shared_ptr<ASTWhileStatement> Parser::loop() {
     ContextLog clog("loop", currentLexeme);
     auto ans = make_shared<ASTWhileStatement>();
-    // TODO
+    eat(currentLexeme.token, "Expected While");
+    ans->condition = bexpr();
+    eat(Token::DO,"Expected Do");
+    ans->statements = stmts();
+    eat(Token::END, "Expected End");
     return ans;
 }
 
@@ -376,17 +379,6 @@ bool Parser::is_math_rel(){
     }else if(currentLexeme.token == Token::MODULUS){return true;
     }
     return false;
-}
-
-bool Parser::is_value(){
-    if(currentLexeme.token == Token::ID){
-        return true;
-    }else if(currentLexeme.token == Token::STRING){return true;
-    }else if(currentLexeme.token == Token::BOOL){return true;
-    }else if(currentLexeme.token == Token::BOOL){return true;
-    }else if(currentLexeme.token == Token::LBRACKET){
-        // is exper??
-    }
 }
 
 bool Parser::is_exprt(){
@@ -435,6 +427,13 @@ bool Parser::is_bool_rel(){
     }else if(currentLexeme.token == Token::GREATER_THAN_EQUAL){
         return true;
     }else if(currentLexeme.token == Token::NOT_EQUAL){
+        return true;
+    }
+    return false;
+}
+
+bool Parser::is_list_index(){
+    if (currentLexeme.token == Token::LBRACKET) {
         return true;
     }
     return false;

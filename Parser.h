@@ -54,6 +54,7 @@ private:
     bool is_stmt();
     bool is_input();
     bool is_bool_rel();
+    bool is_list_index();
 
     std::shared_ptr<ASTWhileStatement> loop();
 
