@@ -139,8 +139,11 @@ std::shared_ptr<ASTAssignmentStatement> Parser::assign() {
     ans->identifier = make_shared<ASTIdentifier>();
     ans->identifier->name = currentLexeme.text;
     advance();
+
+    //listindex(); //TODO
+
     // check to see if list index
-    eat(Token::ASSIGN,"expected assignment");
+    eat(Token::ASSIGN,"expected assignment: = ");
     ans->rhs = expr();
     eat(Token::SEMICOLON,"expected semicolon");
     return ans;
@@ -156,10 +159,11 @@ std::shared_ptr<ASTExpression> Parser::listindex() {
 std::shared_ptr<ASTExpression> Parser::expr() {
     ContextLog clog("expr", currentLexeme);
 
-    //shared_ptr(<ASTExpression>)
+
     auto ans = value();
 
     if(is_math_rel()){
+        cout << "dug" << endl;
         auto complex = make_shared<ASTComplexExpression>();
         complex->firstOperand = ans;
         exprt(complex);
@@ -249,7 +253,7 @@ std::shared_ptr<ASTExpression> Parser::value() {
         eat(Token::RBRACKET,"Expected a RBRACKET");
     }
     else{
-        error("Expected a valued token here..");
+        error("Expected a valued token here...");
     }
 }
 
@@ -308,8 +312,10 @@ std::shared_ptr<ASTBoolExpression> Parser::bexpr() {
     if(currentLexeme.token == Token::NOT){
         boolean_exp->negated = true;
         eat(Token::NOT, "Expected NOT");
-        //expr();
-        //bexprt();
+        boolean_exp->first = expr();
+        if(is_bool_rel()){
+            bexprt(boolean_exp);
+        }
     }
     else{
         boolean_exp->first = expr();
@@ -338,13 +344,17 @@ void Parser::bexprt(std::shared_ptr<ASTComplexBoolExpression> expression) {
     advance();
     expression->second = expr();
     if(is_bconnect()){
+
         bconnect(expression);
     }
 }
 
 void Parser::bconnect(std::shared_ptr<ASTComplexBoolExpression> expression) {
     ContextLog clog("bconnect", currentLexeme);
-    // TODO
+    expression->hasConjunction = true;
+    expression->conjunction = currentLexeme.token;
+    advance();
+    expression->remainder = bexpr();
 }
 
 std::shared_ptr<ASTWhileStatement> Parser::loop() {
@@ -363,7 +373,6 @@ bool Parser::is_math_rel(){
     }else if(currentLexeme.token == Token::DIVIDE){return true;
     }else if(currentLexeme.token == Token::MULTIPLY){return true;
     }else if(currentLexeme.token == Token::MODULUS){return true;
-    }else if(currentLexeme.token == Token::EQUAL){return true;
     }
     return false;
 }

@@ -29,7 +29,7 @@ z = [1, 2, 3];
     )code";
 
 code = R"code(
-    if m == 2 then r = "st"; end
+    if not m == 2 and n <= 2 then r = "st"; end
 )code";
     cout << code << endl;
     istringstream ins(code);
