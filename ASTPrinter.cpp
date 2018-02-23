@@ -165,8 +165,3 @@ void ASTPrinter::dedent() {
 std::string ASTPrinter::spacing() {
     return string(spaceCount, ' ');
 }
-
-
-
-
-

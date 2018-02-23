@@ -28,13 +28,13 @@ end
 z = [1, 2, 3];
     )code";
 
+/*
 code = R"code(
 
-    x = [55];
+    x = [55,11,33];
 
 )code";
-
-    cout << code << endl;
+*/
     istringstream ins(code);
     try {
         Lexer lexer(ins);

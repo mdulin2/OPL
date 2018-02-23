@@ -131,6 +131,7 @@ Lexeme Lexer::literally(int lineVal, int colVal){
             read();
         }
     }else if(tmp == '"'){
+        str = "";
         read();
         while(go == false){
             if(peek() != '"' && peek() != '\n'){
@@ -142,8 +143,9 @@ Lexeme Lexer::literally(int lineVal, int colVal){
                 throw LexerException(debugMessage(oss.str()));
             }
             else{
-                str +=in.peek();
+                //str +=in.peek();
                 read();
+
                 return Lexeme(Token::STRING, str, lineVal, colVal);
             }
             read();

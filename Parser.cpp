@@ -249,6 +249,7 @@ std::shared_ptr<ASTExpression> Parser::value() {
         eat(Token::LBRACKET,"Expected a LBRACKET");
         auto ans = exprlist();
         eat(Token::RBRACKET,"Expected a RBRACKET");
+        return ans;
     }
     else{
         error("Expected a valued token here...");
@@ -267,7 +268,6 @@ std::shared_ptr<ASTListLiteral> Parser::exprlist() {
 void Parser::exprtail(std::shared_ptr<ASTListLiteral> list) {
     ContextLog clog("exprtail", currentLexeme);
     if(currentLexeme.token == Token::COMMA){
-        cout << "udasdfafdag" << endl;
         eat(Token::COMMA,"Expected a comma");
 
         list->expressions.push_back(expr());
