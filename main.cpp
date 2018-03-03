@@ -6,6 +6,7 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include "ASTPrinter.h"
+#include "Typechecker.h"
 
 using namespace std;
 
@@ -15,34 +16,31 @@ x = readint("Enter an int: ");
 y = readint("Enter an int: ");
 if x > y then
     println("The first int was bigger than the second!");
+    z = 1;
 elseif y > x then
     println("The second int was bigger than the first!");
+    z = "test";
 else
     println("You entered the same value twice!");
+    z = false;
 end
-y = 21045;
+y = 21;
 while x > 0 do
     print(".");
     x = x - 1;
 end
 z = [1, 2, 3];
     )code";
-
-/*
-code = R"code(
-
-    x = [55,11,33];
-
-)code";
-*/
-    istringstream ins(code);
     try {
+        istringstream ins(code);
         Lexer lexer(ins);
         Parser parser(lexer);
         ASTPrinter printer;
         parser.getAST()->accept(printer);
+        Typechecker checker;
+        parser.getAST()->accept(checker);
     } catch (MyPLException &e) {
-        cout << "Error: " << e.what() << endl;
+        cout << "Error encountered: " << e.what() << endl;
     }
     return 0;
 }
