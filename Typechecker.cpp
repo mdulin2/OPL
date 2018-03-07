@@ -51,13 +51,14 @@ void Typechecker::visit(ASTIfStatement& ifStatement) {
 
     //else if's traverse
     int length = ifStatement.elseifs.size();
-    cout << "length: " << length << endl;
     for(int spot = 0; spot < length; spot++){
-
+        ifStatement.elseifs[spot].expression->accept(*this);
+        ifStatement.elseifs[spot].statementList->accept(*this);
     }
-
-    
     //else
+    if(ifStatement.elseList != nullptr){
+        ifStatement.elseList->accept(*this);
+    }
 }
 
 void Typechecker::visit(ASTWhileStatement& whileStatement) {
