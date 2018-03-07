@@ -14,7 +14,7 @@
 class ASTNode {
 public:
     virtual ~ASTNode(){} /* virtual destructor because abstract class */
-    
+
     virtual void accept(Visitor& visitor) = 0;
 };
 

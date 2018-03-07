@@ -13,34 +13,36 @@ public:
 class Typechecker: public Visitor {
 public:
     void visit(ASTSimpleBoolExpression& simpleBoolExpr) override;
-    
+
     void visit(ASTComplexBoolExpression& complexBoolExpr) override;
-    
+
     void visit(ASTStatementList& statementList) override;
-    
+
     void visit(ASTBasicIf& basicIf) override;
-    
+
     void visit(ASTIfStatement& ifStatement) override;
-    
+
     void visit(ASTWhileStatement& whileStatement) override;
-    
+
     void visit(ASTPrintStatement& printStatement) override;
-    
+
     void visit(ASTAssignmentStatement& assignmentStatement) override;
-    
+
     void visit(ASTIdentifier& identifier) override;
-    
+
     void visit(ASTLiteral& literal) override;
-    
+
     void visit(ASTListLiteral& listLiteral) override;
-    
+
     void visit(ASTReadExpression& readExpression) override;
-    
+
     void visit(ASTComplexExpression& complexExpression) override;
+
+    int getType(ASTLiteral& literal);
 private:
     // Table to store current scopes
     SymbolTable table;
-    
+
     // Type of the current expression
     MPLType currentType;
 };

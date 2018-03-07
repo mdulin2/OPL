@@ -8,6 +8,7 @@ std::string toString(MPLType t) {
     } else if (t == MPLType::BOOL){
         return "BOOL";
     } else {
+        //might need to change this
         return "ARRAY";
     }
 }

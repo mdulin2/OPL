@@ -31,8 +31,10 @@ while x > 0 do
 end
 z = [1, 2, 3];
     )code";
+
+    string x = "if x == 5 then x = 4;  end ";
     try {
-        istringstream ins(code);
+        istringstream ins(x);
         Lexer lexer(ins);
         Parser parser(lexer);
         ASTPrinter printer;

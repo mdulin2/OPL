@@ -1,6 +1,7 @@
 #include "Typechecker.h"
 #include "ASTNodes.h"
-
+#include <iostream>
+#include <string>
 using namespace std;
 
 void Typechecker::visit(ASTSimpleBoolExpression& simpleBoolExpr) {
@@ -12,8 +13,8 @@ void Typechecker::visit(ASTSimpleBoolExpression& simpleBoolExpr) {
 }
 
 void Typechecker::visit(ASTComplexBoolExpression& complexBoolExpr) {
-    // TODO
     currentType = MPLType::BOOL;
+    cout << "yhrough complex?" << endl;
 }
 
 void Typechecker::visit(ASTStatementList& statementList) {
@@ -22,14 +23,28 @@ void Typechecker::visit(ASTStatementList& statementList) {
         statement->accept(*this);
     }
     table.popTable();
+
 }
 
 void Typechecker::visit(ASTBasicIf& basicIf) {
-    // TODO
+    //basicIf.expression->accept(*this);
+    cout << "asdfasdf" << endl;
 }
 
 void Typechecker::visit(ASTIfStatement& ifStatement) {
-    // TODO
+    //how to traverse!
+    ifStatement.baseIf.expression->accept(*this);
+    ifStatement.baseIf.statementList->accept(*this);
+
+    //else if's traverse
+    int length = ifStatement.elseifs.size();
+    cout << "length: " << length << endl;
+    for(int spot = 0; spot < length; spot++){
+
+    }
+
+    
+    //else
 }
 
 void Typechecker::visit(ASTWhileStatement& whileStatement) {
@@ -41,7 +56,12 @@ void Typechecker::visit(ASTPrintStatement& printStatement) {
 }
 
 void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
-    // TODO
+    if(table.doesSymbolExist(assignmentStatement.identifier->name)){
+        //how to know what kind of Variable to push?
+    }else{
+        cout << "Insert into the table" << endl;
+    }
+
 }
 
 void Typechecker::visit(ASTIdentifier& identifier) {
@@ -71,10 +91,13 @@ void Typechecker::visit(ASTReadExpression& readExpression) {
     }
 }
 
+//types must be the same in the comparison
+//relational operator needs to be possible for that type
+//can't do greater than less than for a boolean
 void Typechecker::visit(ASTComplexExpression& complexExpression) {
-    // TODO
+
 }
 
-
-
-
+int Typechecker::getType(ASTLiteral& literal){
+    //TODO
+}
