@@ -12,27 +12,10 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     string code = R"code(
-x = readint("Enter an int: ");
-y = readint("Enter an int: ");
-if x > y then
-    println("The first int was bigger than the second!");
-    z = 1;
-elseif y > x then
-    println("The second int was bigger than the first!");
-    z = "test";
-else
-    println("You entered the same value twice!");
-    z = false;
-end
-y = 21;
-while x > 0 do
-    print(".");
-    x = x - 1;
-end
-z = [1, 2, 3];
+
     )code";
 
-    string x = "if x == 5 then x = 4;  end ";
+    string x = "if true == false then end ";
     try {
         istringstream ins(x);
         Lexer lexer(ins);

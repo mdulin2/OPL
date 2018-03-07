@@ -13,8 +13,22 @@ void Typechecker::visit(ASTSimpleBoolExpression& simpleBoolExpr) {
 }
 
 void Typechecker::visit(ASTComplexBoolExpression& complexBoolExpr) {
+    complexBoolExpr.first->accept(*this);
+    auto type1 = currentType;
+    complexBoolExpr.second->accept(*this);
+    auto type2 = currentType;
+    if(type1 != type2){
+	throw TypecheckerException("Type Mismatch");
+    }
+    if(type1 == MPLType::BOOL){
+	if(complexBoolExpr.relation != Token::EQUAL && complexBoolExpr.relation != Token::NOT_EQUAL){
+	    throw TypecheckerException("Incorrect Boolean Evaluation");
+	}
+    }
+    if(complexBoolExpr.hasConjunction){
+	complexBoolExpr.remainder->accept(*this);
+    }
     currentType = MPLType::BOOL;
-    cout << "yhrough complex?" << endl;
 }
 
 void Typechecker::visit(ASTStatementList& statementList) {
@@ -23,7 +37,6 @@ void Typechecker::visit(ASTStatementList& statementList) {
         statement->accept(*this);
     }
     table.popTable();
-
 }
 
 void Typechecker::visit(ASTBasicIf& basicIf) {
@@ -77,6 +90,8 @@ void Typechecker::visit(ASTIdentifier& identifier) {
 
 void Typechecker::visit(ASTLiteral& literal) {
     currentType = literal.type;
+    cout << "Literal Visit" << endl;
+    cout << toString(currentType) << endl;
 }
 
 void Typechecker::visit(ASTListLiteral& listLiteral) {
