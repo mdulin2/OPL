@@ -12,12 +12,12 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     string code = R"code(
-
+        x = ["t","j"];
     )code";
 
-    string x = "if true == false then end ";
+    string x = "x = 5 + 111; ";
     try {
-        istringstream ins(x);
+        istringstream ins(code);
         Lexer lexer(ins);
         Parser parser(lexer);
         ASTPrinter printer;

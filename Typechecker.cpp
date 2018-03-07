@@ -21,9 +21,9 @@ void Typechecker::visit(ASTComplexBoolExpression& complexBoolExpr) {
 	throw TypecheckerException("Type Mismatch");
     }
     if(type1 == MPLType::BOOL){
-	if(complexBoolExpr.relation != Token::EQUAL && complexBoolExpr.relation != Token::NOT_EQUAL){
-	    throw TypecheckerException("Incorrect Boolean Evaluation");
-	}
+    	if(complexBoolExpr.relation != Token::EQUAL && complexBoolExpr.relation != Token::NOT_EQUAL){
+    	    throw TypecheckerException("Incorrect Boolean Evaluation");
+    	}
     }
     if(complexBoolExpr.hasConjunction){
 	complexBoolExpr.remainder->accept(*this);
@@ -40,8 +40,7 @@ void Typechecker::visit(ASTStatementList& statementList) {
 }
 
 void Typechecker::visit(ASTBasicIf& basicIf) {
-    //basicIf.expression->accept(*this);
-    cout << "asdfasdf" << endl;
+    //basicIf.expression->accept(*this)
 }
 
 void Typechecker::visit(ASTIfStatement& ifStatement) {
@@ -70,12 +69,32 @@ void Typechecker::visit(ASTPrintStatement& printStatement) {
 }
 
 void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
+    //ID in the table
     if(table.doesSymbolExist(assignmentStatement.identifier->name)){
-        //how to know what kind of Variable to push?
-    }else{
-        cout << "Insert into the table" << endl;
-    }
+        auto check_type = table.getSymbolType(assignmentStatement.identifier->name);
+        assignmentStatement.rhs->accept(*this);
 
+        if(check_type != currentType){
+            throw TypecheckerException("Identifier " + assignmentStatement.identifier->name + "changed types after declared.");
+        }
+
+
+    }else{
+        //ID not in the table
+        assignmentStatement.rhs->accept(*this);
+        if(currentType == MPLType::INT){
+            table.storeInt(assignmentStatement.identifier->name);
+        }
+        else if(currentType == MPLType::STRING){
+            table.storeString(assignmentStatement.identifier->name);
+        }
+        else if(currentType == MPLType::BOOL){
+            table.storeBool(assignmentStatement.identifier->name);
+        }
+        else if(currentType == MPLType::ARRAY){
+            table.storeVector(assignmentStatement.identifier->name);
+        }
+    }
 }
 
 void Typechecker::visit(ASTIdentifier& identifier) {
@@ -91,11 +110,10 @@ void Typechecker::visit(ASTIdentifier& identifier) {
 
 void Typechecker::visit(ASTLiteral& literal) {
     currentType = literal.type;
-    cout << "Literal Visit" << endl;
-    cout << toString(currentType) << endl;
 }
 
 void Typechecker::visit(ASTListLiteral& listLiteral) {
+
     // TODO
 }
 
@@ -111,9 +129,23 @@ void Typechecker::visit(ASTReadExpression& readExpression) {
 //relational operator needs to be possible for that type
 //can't do greater than less than for a boolean
 void Typechecker::visit(ASTComplexExpression& complexExpression) {
+    complexExpression.firstOperand->accept(*this);
+    auto type1 = currentType;
+    complexExpression.rest->accept(*this);
+    auto type2 = currentType;
+    if(type1 != type2){
+        throw TypecheckerException("Cannot do arithmetic on different types.");
+    }
+    //assumption that type1 and type2 are the same
+    if(type1 == MPLType::STRING){
+        if(complexExpression.operation != Token::PLUS){
+            throw TypecheckerException("Invalid operation on a string: " + toString(type1));
+        }
+    }
 
-}
-
-int Typechecker::getType(ASTLiteral& literal){
-    //TODO
+    if(type1 == MPLType::BOOL){
+        throw TypecheckerException("Invalid operation on a boolean.");
+    }
+    //for assign to be able to deal with
+    currentType = type1;
 }
