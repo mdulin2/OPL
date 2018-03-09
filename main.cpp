@@ -12,7 +12,20 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     string code = R"code(
-        x = ["t","j"];
+    max = 5;
+    t = true;
+    st = "string";
+    if 5 == max then
+        t = false;
+    elseif t then
+        x = 5;
+        x[0] = max;
+    else
+        max = 8;
+      end
+
+     g = 5 + 11 * 5 / 54 % 12;
+     g = "t" - "hh";
     )code";
 
     string x = "x = 5 + 111; ";

@@ -14,6 +14,9 @@ void ASTPrinter::visit(ASTSimpleBoolExpression& simpleBoolExpr) {
         println("not");
         simpleBoolExpr.expression->accept(*this);
     }
+    else{
+        simpleBoolExpr.expression->accept(*this);
+    }
     dedent();
 }
 

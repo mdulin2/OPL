@@ -327,6 +327,16 @@ std::shared_ptr<ASTBoolExpression> Parser::bexpr() {
         }
     }
 
+    //deals with the simple boolean expression
+    if(boolean_exp->second == nullptr){
+        auto simple_exp = make_shared<ASTSimpleBoolExpression>();
+        simple_exp->negated = boolean_exp->negated;
+        simple_exp->expression = boolean_exp->first;
+        if(is_bool_rel()){
+            bexprt(boolean_exp);
+        }
+        return simple_exp;
+    }
     return boolean_exp;
 }
 

@@ -75,7 +75,7 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
         assignmentStatement.rhs->accept(*this);
 
         if(check_type != currentType){
-            throw TypecheckerException("Identifier " + assignmentStatement.identifier->name + "changed types after declared.");
+            throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' changed types after declared.");
         }
 
 
