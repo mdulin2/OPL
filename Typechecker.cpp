@@ -77,8 +77,7 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
         if(check_type != currentType){
             throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' changed types after declared.");
         }
-
-
+        
     }else{
         //ID not in the table
         assignmentStatement.rhs->accept(*this);
