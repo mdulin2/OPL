@@ -13,19 +13,13 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     string code = R"code(
     max = 5;
-    t = true;
-    st = "string";
-    if 5 == max then
-        t = false;
-    elseif t then
-        x = 5;
-        x[0] = max;
-    else
-        max = 8;
-      end
-
-     g = 5 + 11 * 5 / 54 % 12;
-     g = "t" - "hh";
+    while max == 5 do
+        print("5");
+        max = 4;
+    end
+    if max >= 4 then
+        print(">4");
+    end
     )code";
 
     string x = "x = 5 + 111; ";
