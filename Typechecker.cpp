@@ -62,6 +62,8 @@ void Typechecker::visit(ASTIfStatement& ifStatement) {
 
 void Typechecker::visit(ASTWhileStatement& whileStatement) {
     // TODO
+    whileStatement.condition->accept(*this);
+    whileStatement.statements->accept(*this);
 }
 
 void Typechecker::visit(ASTPrintStatement& printStatement) {
