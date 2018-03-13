@@ -12,16 +12,16 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     string code = R"code(
-    max = 5;
-    while max == 5 do
-        print("5");
-        max = 4;
+    x = [23,3] + [14];
+    y[1] = [5];
+    z = y + x;
+    while 4 != 2 do
+        if true then
+            j = 4;
+        end
     end
-    if max >= 4 then
-        print(">4");
-    end
+    y[0] = ["string"];
 
-    x[1] = [12341243,1,2,4,5,56];
     )code";
 
     string x = "x = 5 + 111; ";

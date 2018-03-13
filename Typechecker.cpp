@@ -17,14 +17,21 @@ void Typechecker::visit(ASTComplexBoolExpression& complexBoolExpr) {
     auto type1 = currentType;
     complexBoolExpr.second->accept(*this);
     auto type2 = currentType;
-    if(type1 != type2){
-	throw TypecheckerException("Type Mismatch");
+    if (type1 == MPLType::ARRAY || type2 == MPLType::ARRAY){
+	      throw TypecheckerException("Cannot compare lists together");
     }
+    //checks the types of the two compared expressions
+    if(type1 != type2){
+	       throw TypecheckerException("Type Mismatch");
+    }
+
+    //only the boolean can't have the other equality measures
     if(type1 == MPLType::BOOL){
     	if(complexBoolExpr.relation != Token::EQUAL && complexBoolExpr.relation != Token::NOT_EQUAL){
     	    throw TypecheckerException("Incorrect Boolean Evaluation");
     	}
     }
+    //conjection
     if(complexBoolExpr.hasConjunction){
 	complexBoolExpr.remainder->accept(*this);
     }
@@ -40,7 +47,7 @@ void Typechecker::visit(ASTStatementList& statementList) {
 }
 
 void Typechecker::visit(ASTBasicIf& basicIf) {
-    //basicIf.expression->accept(*this)
+    //just ended up not wanting to use this...
 }
 
 void Typechecker::visit(ASTIfStatement& ifStatement) {
@@ -61,18 +68,21 @@ void Typechecker::visit(ASTIfStatement& ifStatement) {
 }
 
 void Typechecker::visit(ASTWhileStatement& whileStatement) {
-    // TODO
     whileStatement.condition->accept(*this);
     whileStatement.statements->accept(*this);
 }
 
 void Typechecker::visit(ASTPrintStatement& printStatement) {
     printStatement.expression->accept(*this);
+    if(currentType == MPLType::ARRAY){
+        throw TypecheckerException("Lists cannot be printed.");
+    }
 }
 
 void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
     //ID in the table
     if(table.doesSymbolExist(assignmentStatement.identifier->name)){
+
         auto check_type = table.getSymbolType(assignmentStatement.identifier->name);
         assignmentStatement.rhs->accept(*this);
 
@@ -89,8 +99,8 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
         }
         //checks to see if the types in the array are the same as previously.
         if(currentType == MPLType::ARRAY){
-            auto array_type = table.getSymbolTypeArray(assignmentStatement.identifier->name);
-            if(def_type != array_type){
+            auto new_type = table.getSymbolTypeArray(assignmentStatement.identifier->name);
+            if(new_type != array_type){
                 throw TypecheckerException("Arrays don't have the same type in them.");
             }
         }
@@ -98,14 +108,12 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
     }else{
         //ID not in the table
         assignmentStatement.rhs->accept(*this);
-
         //checks if the value has an index and should not
         if(assignmentStatement.identifier->indexExpression != nullptr){
             if(currentType != MPLType::ARRAY){
                 throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
             }
         }
-
         //assigning initial types
         if(currentType == MPLType::INT){
             table.storeInt(assignmentStatement.identifier->name);
@@ -117,15 +125,18 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
             table.storeBool(assignmentStatement.identifier->name);
         }
         else if(currentType == MPLType::ARRAY){
-            if(assignmentStatement.identifier->indexExpression == nullptr){
+
+            if(assignmentStatement.identifier->indexExpression != nullptr){
+
+                //checks the index being used
                 assignmentStatement.identifier->indexExpression->accept(*this);
                 //the index is an integer
                 if(currentType != MPLType::INT){
-                    throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "has an Invalid index");
+                    throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
                 }
             }
-            //def_type is the type in the array
-            table.storeVector(assignmentStatement.identifier->name,def_type);
+            //array_type is the type in the array
+            table.storeVector(assignmentStatement.identifier->name,array_type);
         }
         else{
             throw TypecheckerException("Not a valid type.");
@@ -139,6 +150,7 @@ void Typechecker::visit(ASTIdentifier& identifier) {
     } else {
         throw TypecheckerException("Identifier " + identifier.name + " used before defined");
     }
+    //checks for indexs
     if (identifier.indexExpression && currentType != MPLType::ARRAY) {
         throw TypecheckerException("Identifier " + identifier.name + " given an index when not an array");
     }
@@ -155,17 +167,15 @@ void Typechecker::visit(ASTListLiteral& listLiteral) {
     }
 
     listLiteral.expressions[0]->accept(*this);
-    def_type = currentType;
+    array_type = currentType;
     for(int i = 1; i < listLiteral.expressions.size(); i++ ){
         listLiteral.expressions[i]->accept(*this);
 
         //makes sure that the two types in the list are the same
-        if(def_type != currentType){
+        if(array_type != currentType){
             throw TypecheckerException("Array items not of the same type!" );
         }
     }
-
-
     currentType = MPLType::ARRAY;
 }
 
@@ -183,10 +193,21 @@ void Typechecker::visit(ASTReadExpression& readExpression) {
 void Typechecker::visit(ASTComplexExpression& complexExpression) {
     complexExpression.firstOperand->accept(*this);
     auto type1 = currentType;
+    auto array1 = array_type;
     complexExpression.rest->accept(*this);
+    auto array2 = array_type;
     auto type2 = currentType;
     if(type1 != type2){
         throw TypecheckerException("Cannot do arithmetic on different types.");
+    }
+
+    if(type1 == MPLType::ARRAY){
+        if(array1 != array2){
+            throw TypecheckerException("Array types are not the same. Cannot be added together");
+        }
+        if(complexExpression.operation != Token::PLUS){
+            throw TypecheckerException("Invalid operation on array " + toString(type1));
+        }
     }
     //assumption that type1 and type2 are the same
     if(type1 == MPLType::STRING){

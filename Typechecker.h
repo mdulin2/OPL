@@ -45,7 +45,7 @@ private:
 
     // Type of the current expression
     MPLType currentType;
-    MPLType def_type;
+    MPLType array_type;
 };
 
 #endif /* TYPECHECKER_H */
