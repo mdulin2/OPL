@@ -247,11 +247,20 @@ std::shared_ptr<ASTExpression> Parser::value() {
     }else if(currentLexeme.token == Token::LBRACKET){
 
         eat(Token::LBRACKET,"Expected a LBRACKET");
-        auto ans = exprlist();
-        eat(Token::RBRACKET,"Expected a RBRACKET");
-        return ans;
-    }
-    else{
+        if(currentLexeme.token != Token::RBRACKET){
+            auto ans = exprlist();
+            eat(Token::RBRACKET,"Expected a RBRACKET");
+            return ans;
+        //empty list
+        }else{
+            auto ans = make_shared<ASTListLiteral>();
+            eat(Token::RBRACKET,"Expected a RBRACKET");
+            return ans;
+        }
+
+    }else if(currentLexeme.token == Token::RBRACKET){
+        cout << "Spot!" << endl;
+    }else{
         error("Expected a valued token here...");
     }
 }

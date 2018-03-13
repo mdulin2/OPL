@@ -76,13 +76,37 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
         auto check_type = table.getSymbolType(assignmentStatement.identifier->name);
         assignmentStatement.rhs->accept(*this);
 
+        //checks if the value has an index and should not
+        if(assignmentStatement.identifier->indexExpression != nullptr){
+            if(currentType != MPLType::ARRAY){
+                throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
+            }
+        }
+
+        //checking if the types are the same or not
         if(check_type != currentType){
             throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' changed types after declared.");
         }
-        
+        //checks to see if the types in the array are the same as previously.
+        if(currentType == MPLType::ARRAY){
+            auto array_type = table.getSymbolTypeArray(assignmentStatement.identifier->name);
+            if(def_type != array_type){
+                throw TypecheckerException("Arrays don't have the same type in them.");
+            }
+        }
+
     }else{
         //ID not in the table
         assignmentStatement.rhs->accept(*this);
+
+        //checks if the value has an index and should not
+        if(assignmentStatement.identifier->indexExpression != nullptr){
+            if(currentType != MPLType::ARRAY){
+                throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
+            }
+        }
+
+        //assigning initial types
         if(currentType == MPLType::INT){
             table.storeInt(assignmentStatement.identifier->name);
         }
@@ -93,7 +117,18 @@ void Typechecker::visit(ASTAssignmentStatement& assignmentStatement) {
             table.storeBool(assignmentStatement.identifier->name);
         }
         else if(currentType == MPLType::ARRAY){
-            table.storeVector(assignmentStatement.identifier->name);
+            if(assignmentStatement.identifier->indexExpression == nullptr){
+                assignmentStatement.identifier->indexExpression->accept(*this);
+                //the index is an integer
+                if(currentType != MPLType::INT){
+                    throw TypecheckerException("Identifier '" + assignmentStatement.identifier->name + "has an Invalid index");
+                }
+            }
+            //def_type is the type in the array
+            table.storeVector(assignmentStatement.identifier->name,def_type);
+        }
+        else{
+            throw TypecheckerException("Not a valid type.");
         }
     }
 }
@@ -115,7 +150,23 @@ void Typechecker::visit(ASTLiteral& literal) {
 
 void Typechecker::visit(ASTListLiteral& listLiteral) {
 
-    // TODO
+    if(listLiteral.expressions.size() == 0){
+        return;
+    }
+
+    listLiteral.expressions[0]->accept(*this);
+    def_type = currentType;
+    for(int i = 1; i < listLiteral.expressions.size(); i++ ){
+        listLiteral.expressions[i]->accept(*this);
+
+        //makes sure that the two types in the list are the same
+        if(def_type != currentType){
+            throw TypecheckerException("Array items not of the same type!" );
+        }
+    }
+
+
+    currentType = MPLType::ARRAY;
 }
 
 void Typechecker::visit(ASTReadExpression& readExpression) {

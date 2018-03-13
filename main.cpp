@@ -20,6 +20,8 @@ int main(int argc, const char * argv[]) {
     if max >= 4 then
         print(">4");
     end
+
+    x[1] = [12341243,1,2,4,5,56];
     )code";
 
     string x = "x = 5 + 111; ";

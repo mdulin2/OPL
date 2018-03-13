@@ -6,11 +6,15 @@ using namespace std;
 
 Symbol::Symbol() {
     type = MPLType::INT;
+    auto array_type = MPLType::INT;
 }
 MPLType Symbol::getType() {
     return type;
 }
 
+MPLType Symbol::getArrayType(){
+    return array_type;
+}
 void Symbol::setInt() {
     type = MPLType::INT;
 }
@@ -22,6 +26,10 @@ void Symbol::setBool() {
 }
 void Symbol::setVector() {
     type = MPLType::ARRAY;
+}
+
+void Symbol::setArrayType(MPLType vartype){
+    array_type = vartype;
 }
 
 void SymbolTable::pushTable() {
@@ -68,7 +76,7 @@ void SymbolTable::storeBool(std::string name) {
     info->setBool();
 }
 
-void SymbolTable::storeVector(std::string name) {
+void SymbolTable::storeVector(std::string name, MPLType vector_type) {
     auto *info = getSymbol(name);
     if (info && info->getType() != MPLType::ARRAY) {
         throw SymbolTableException("Variable " + name + " is not of type array");
@@ -76,6 +84,8 @@ void SymbolTable::storeVector(std::string name) {
     if (!info) {
         info = createSymbol(name);
     }
+
+    info->setArrayType(vector_type);
     info->setVector();
 }
 
@@ -100,8 +110,16 @@ Symbol *SymbolTable::getSymbol(std::string name) {
             return &itSymbol->second;
         }
     }
-    
+
     return nullptr;
+}
+
+MPLType SymbolTable::getSymbolTypeArray(std::string name){
+    auto *info = getSymbol(name);
+    if (!info) {
+        throw SymbolTableException("Internal error: Unable to find symbol " + name);
+    }
+    return info->getArrayType();
 }
 
 // Create a new symbol and return a pointer to it.
