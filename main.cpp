@@ -20,7 +20,7 @@ int main(int argc, const char * argv[]) {
             j = 4;
         end
     end
-    y[0] = ["string"];
+    y[0] = [2];
 
     )code";
 
