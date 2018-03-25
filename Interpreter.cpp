@@ -20,6 +20,7 @@ void Interpreter::visit(ASTSimpleBoolExpression& simpleBoolExpr) {
 }
 
 void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
+    cout << "In the complex expressoin" << endl;
     complexBoolExpr.first->accept(*this);
     auto lhsType = currentType;
     auto lhsInt = currentInt;
@@ -31,7 +32,7 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
     auto rhsString = currentString;
     auto rhsBool = currentBool;
     bool myResult;
-    
+
     // DONE BUT NOT TESTED: figure out what comparison to make, do that comparison,
     // and store the result in myResult.
     //***************************************************************
@@ -57,10 +58,11 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 case MPLType::BOOL:
                     break;
-                default;
+                default:
                     throw InterpreterException("Bad Type Error");
-            }
+
             break;
+        }
         case Token::NOT_EQUAL:
             switch(lhsType){
                 case MPLType::INT:
@@ -71,9 +73,10 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 case MPLType::BOOL:
                     break;
-                default;
+                default:
                     throw InterpreterException("Bad Type Error");
             break;
+        }
         case Token::LESS_THAN:
             switch(lhsType){
                 case MPLType::INT:
@@ -82,9 +85,10 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                 case MPLType::STRING:
                     myResult = lhsString < rhsString;
                     break;
-                default;
+                default:
                     throw InterpreterException("Bad Type Error");
             break;
+        }
         case Token::LESS_THAN_EQUAL:
             switch(lhsType){
                 case MPLType::INT:
@@ -93,9 +97,10 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                 case MPLType::STRING:
                     myResult = lhsString <= rhsString;
                     break;
-                default;
+                default:
                     throw InterpreterException("Bad Type Error");
             break;
+        }
         case Token::GREATER_THAN:
             switch(lhsType){
                 case MPLType::INT:
@@ -104,9 +109,10 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                 case MPLType::STRING:
                     myResult = lhsString > rhsString;
                     break;
-                default;
+                default:
                     throw InterpreterException("Bad Type Error");
             break;
+        }
         case Token::GREATER_THAN_EQUAL:
             switch(lhsType){
                 case MPLType::INT:
@@ -115,13 +121,14 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                 case MPLType::STRING:
                     myResult = lhsString >= rhsString;
                     break;
-                default;
+                default:
                     throw InterpreterException("Bad Type Error");
-            break;
 
+            break;
+        }
     }
     //***************************************************************
-    
+
     if (complexBoolExpr.hasConjunction) {
         complexBoolExpr.remainder->accept(*this);
         if (complexBoolExpr.conjunction == Token::AND) {
@@ -155,7 +162,8 @@ void Interpreter::visit(ASTBasicIf& basicIf) {
 }
 
 void Interpreter::visit(ASTIfStatement& ifStatement) {
-    // TODO
+    ifStatement.baseIf.expression->accept(*this);
+    ifStatement.baseIf.statementList->accept(*this);
 }
 
 void Interpreter::visit(ASTWhileStatement& whileStatement) {
@@ -167,7 +175,13 @@ void Interpreter::visit(ASTWhileStatement& whileStatement) {
 }
 
 void Interpreter::visit(ASTPrintStatement& printStatement) {
-    // TODO
+    if(printStatement.isPrintln){
+        printStatement.expression->accept(*this);
+        cout << "\n";
+    }
+    else{
+        printStatement.expression->accept(*this);
+    }
 }
 
 void Interpreter::visit(ASTAssignmentStatement& assignmentStatement) {
