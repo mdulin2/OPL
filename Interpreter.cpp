@@ -186,6 +186,42 @@ void Interpreter::visit(ASTPrintStatement& printStatement) {
 
 void Interpreter::visit(ASTAssignmentStatement& assignmentStatement) {
     // TODO
+    //************************************************************************
+    // Symbol in table
+    if(table.doesSymbolExist(assignmentStatement.identifier->name)){
+        auto check_type = table.getSymbolType(assignmentStatement.identifier->name);
+        assignmentStatement.rhs->accept(*this);
+        if(check_type != currentType){
+            throw InterpreterException("Type Mismatch Exception");
+        }
+        //checks if the value has an index and should not
+        if(assignmentStatement.identifier->indexExpression != nullptr){
+            if(currentType != MPLType::ARRAY){
+                throw InterpreterException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
+            }
+        }
+    // Symbol not in table
+    }else{
+        assignmentStatement.rhs->accept(*this);
+        //checks if the value has an index and should not
+        if(assignmentStatement.identifier->indexExpression != nullptr){
+            if(currentType != MPLType::ARRAY){
+                throw InterpreterException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
+            }
+        }
+        //assigning initial types
+        if(currentType == MPLType::INT){
+            table.storeIntVal(assignmentStatement.identifier->name, currentInt);
+        }
+        else if(currentType == MPLType::STRING){
+            table.storeStringVal(assignmentStatement.identifier->name, currentString);
+        }
+        else if(currentType == MPLType::BOOL){
+            table.storeBoolVal(assignmentStatement.identifier->name, currentBool);
+        }
+        //ADD FUNCTIONALITY FOR ARRAYS
+        
+    }
 }
 
 void Interpreter::visit(ASTIdentifier& identifier) {

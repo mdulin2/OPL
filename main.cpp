@@ -12,19 +12,10 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     string code = R"code(
-    x = 10;
-    if 10 == x then x = 5; end
-    y[1] = [5];
-    z = y + x;
-    while 4 != 2 do
-        if true then
-            j = 4;
-        end
-    end
-    y[0] = [2];
-
+    x = 5;
+    y = x;
+    print(y);
     )code";
-    string x = "println(x);   ";
     try {
         istringstream ins(code);
         Lexer lexer(ins);
