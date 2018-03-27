@@ -12,9 +12,11 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     string code = R"code(
-    x = 5;
-    y = x;
-    print(y);
+	x = 4;
+	while x <= 7 do
+		x = x + 1;
+		println(x);
+	end
     )code";
     try {
         istringstream ins(code);

@@ -20,7 +20,6 @@ void Interpreter::visit(ASTSimpleBoolExpression& simpleBoolExpr) {
 }
 
 void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
-    cout << "In the complex expressoin" << endl;
     complexBoolExpr.first->accept(*this);
     auto lhsType = currentType;
     auto lhsInt = currentInt;
@@ -33,9 +32,8 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
     auto rhsBool = currentBool;
     bool myResult;
 
-    // DONE BUT NOT TESTED: figure out what comparison to make, do that comparison,
+    // DONE: figure out what comparison to make, do that comparison,
     // and store the result in myResult.
-    //***************************************************************
 
     // Check to see if types are equal
     if(lhsType != rhsType){
@@ -60,9 +58,8 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 default:
                     throw InterpreterException("Bad Type Error");
-
+			}
             break;
-        }
         case Token::NOT_EQUAL:
             switch(lhsType){
                 case MPLType::INT:
@@ -75,8 +72,8 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 default:
                     throw InterpreterException("Bad Type Error");
-            break;
-        }
+			}            
+			break;
         case Token::LESS_THAN:
             switch(lhsType){
                 case MPLType::INT:
@@ -87,8 +84,8 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 default:
                     throw InterpreterException("Bad Type Error");
-            break;
-        }
+			}            
+			break;
         case Token::LESS_THAN_EQUAL:
             switch(lhsType){
                 case MPLType::INT:
@@ -99,8 +96,8 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 default:
                     throw InterpreterException("Bad Type Error");
-            break;
-        }
+			}            
+			break;
         case Token::GREATER_THAN:
             switch(lhsType){
                 case MPLType::INT:
@@ -111,8 +108,8 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 default:
                     throw InterpreterException("Bad Type Error");
-            break;
-        }
+			}            
+			break;
         case Token::GREATER_THAN_EQUAL:
             switch(lhsType){
                 case MPLType::INT:
@@ -123,12 +120,9 @@ void Interpreter::visit(ASTComplexBoolExpression& complexBoolExpr) {
                     break;
                 default:
                     throw InterpreterException("Bad Type Error");
-
-            break;
-        }
-    }
-    //***************************************************************
-
+			}            
+			break;
+	}
     if (complexBoolExpr.hasConjunction) {
         complexBoolExpr.remainder->accept(*this);
         if (complexBoolExpr.conjunction == Token::AND) {
@@ -163,7 +157,22 @@ void Interpreter::visit(ASTBasicIf& basicIf) {
 
 void Interpreter::visit(ASTIfStatement& ifStatement) {
     ifStatement.baseIf.expression->accept(*this);
-    ifStatement.baseIf.statementList->accept(*this);
+	if(currentBool){
+    	ifStatement.baseIf.statementList->accept(*this);
+		return;
+	}
+	int length = ifStatement.elseifs.size();
+	for(int spot = 0; spot < length; spot++){
+		ifStatement.elseifs[spot].expression->accept(*this);
+		if(currentBool){
+    		ifStatement.elseifs[spot].statementList->accept(*this);
+			return;
+		}
+	}
+	if(ifStatement.elseList != nullptr){
+		ifStatement.elseList->accept(*this);
+		return;
+	}
 }
 
 void Interpreter::visit(ASTWhileStatement& whileStatement) {
@@ -175,57 +184,48 @@ void Interpreter::visit(ASTWhileStatement& whileStatement) {
 }
 
 void Interpreter::visit(ASTPrintStatement& printStatement) {
-    if(printStatement.isPrintln){
-        printStatement.expression->accept(*this);
-        cout << "\n";
+	// TODO    
+	printStatement.expression->accept(*this);
+	if(currentType == MPLType::INT){
+        cout << currentInt;
+    }else if(currentType == MPLType::BOOL){
+        cout << currentBool;
+    }else if(currentType == MPLType::STRING){
+        cout << currentString;
+    }else if(currentType == MPLType::ARRAY){
+        // table.storeVector(assignmentStatement.identifier-> name, CURRENTVECTOR);
     }
-    else{
-        printStatement.expression->accept(*this);
+
+    if(printStatement.isPrintln){
+        cout << "\n";
     }
 }
 
 void Interpreter::visit(ASTAssignmentStatement& assignmentStatement) {
     // TODO
-    //************************************************************************
-    // Symbol in table
-    if(table.doesSymbolExist(assignmentStatement.identifier->name)){
-        auto check_type = table.getSymbolType(assignmentStatement.identifier->name);
-        assignmentStatement.rhs->accept(*this);
-        if(check_type != currentType){
-            throw InterpreterException("Type Mismatch Exception");
-        }
-        //checks if the value has an index and should not
-        if(assignmentStatement.identifier->indexExpression != nullptr){
-            if(currentType != MPLType::ARRAY){
-                throw InterpreterException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
-            }
-        }
-    // Symbol not in table
-    }else{
-        assignmentStatement.rhs->accept(*this);
-        //checks if the value has an index and should not
-        if(assignmentStatement.identifier->indexExpression != nullptr){
-            if(currentType != MPLType::ARRAY){
-                throw InterpreterException("Identifier '" + assignmentStatement.identifier->name + "' has an Invalid index");
-            }
-        }
-        //assigning initial types
-        if(currentType == MPLType::INT){
-            table.storeIntVal(assignmentStatement.identifier->name, currentInt);
-        }
-        else if(currentType == MPLType::STRING){
-            table.storeStringVal(assignmentStatement.identifier->name, currentString);
-        }
-        else if(currentType == MPLType::BOOL){
-            table.storeBoolVal(assignmentStatement.identifier->name, currentBool);
-        }
-        //ADD FUNCTIONALITY FOR ARRAYS
-        
+    assignmentStatement.rhs->accept(*this);
+    if(currentType == MPLType::INT){
+        table.storeIntVal(assignmentStatement.identifier->name, currentInt);
+    }else if(currentType == MPLType::BOOL){
+        table.storeBoolVal(assignmentStatement.identifier->name, currentBool);
+    }else if(currentType == MPLType::STRING){
+        table.storeStringVal(assignmentStatement.identifier->name, currentString);
+    }else if(currentType == MPLType::ARRAY){
+        // table.storeVector(assignmentStatement.identifier-> name, CURRENTVECTOR);
     }
 }
 
 void Interpreter::visit(ASTIdentifier& identifier) {
-    // TODO
+    currentType = table.getSymbolType(identifier.name);
+    if(currentType == MPLType::INT){
+	currentInt = table.getIntVal(identifier.name);
+    }else if(currentType == MPLType::BOOL){
+        currentBool = table.getBoolVal(identifier.name);
+    }else if(currentType == MPLType::STRING){
+        currentString = table.getStringVal(identifier.name);
+    }else if(currentType == MPLType::ARRAY){
+        // DO THE ARRAY THINGS
+    }
 }
 
 void Interpreter::visit(ASTLiteral& literal) {
@@ -282,5 +282,56 @@ void Interpreter::visit(ASTReadExpression& readExpression) {
 }
 
 void Interpreter::visit(ASTComplexExpression& complexExpression) {
-    // TODO
+    complexExpression.firstOperand->accept(*this);
+	auto firstType = currentType;
+	// Default values will be changed before use.	
+	auto firstInt = 0;
+	std::string firstString = "";
+	auto firstBool = false;
+	if(currentType == MPLType::INT){
+		firstInt = currentInt;
+	}
+	else if(currentType == MPLType::STRING){
+		firstString = currentString;
+	}
+	else if(currentType == MPLType::BOOL){
+		firstBool = currentBool;
+	}
+	complexExpression.rest->accept(*this);
+	if(complexExpression.operation == Token::PLUS){
+		if(currentType == MPLType::INT){
+			currentInt = firstInt + currentInt;
+		}else if(currentType == MPLType::STRING){
+			currentString = firstString + currentString;
+		}else {
+			throw InterpreterException("Operation Mismatch");
+		}
+	}else if(complexExpression.operation == Token::MINUS){
+		if(currentType == MPLType::INT){
+			currentInt = firstInt - currentInt;
+		}else{
+			throw InterpreterException("Operation Mismatch");
+		}
+	}else if(complexExpression.operation == Token::MULTIPLY){
+		if(currentType == MPLType::INT){
+			currentInt = firstInt * currentInt;
+		}else{
+			throw InterpreterException("Operation Mismatch");
+		}
+	}else if(complexExpression.operation == Token::DIVIDE){
+		if(currentType == MPLType::INT){
+			currentInt = firstInt / currentInt;
+		}else {
+			throw InterpreterException("Operation Mismatch");
+		}
+	}else if(complexExpression.operation == Token::MODULUS){
+		if(currentType == MPLType::INT){
+			currentInt = firstInt % currentInt;
+		}else if(currentType == MPLType::STRING){
+			throw InterpreterException("Do you even know how to use strings?");
+		}else {
+			throw InterpreterException("Operation Mismatch");
+		}
+	}
 }
+
